@@ -20,33 +20,28 @@ class ViewController: UIViewController {
     }
     
     func httpNetworkingByAlamorfire(){
-        AF.request(urlString).responseJSON{ response in
+        AF.request(urlString)
+            .response{ response in
             print(response.response)
             print(response.data)
             print(response.error)
+            
             print(response.result)
             
-//            let postSerializedResponse = JSONDecoder()
-            
-            for eachPostResponse in postSerializedResponse{
-                let eachPost = eachPostResponse as! [String:Any]
-                let eachPostUserID = eachPost["userId"] as! Int
-                let eachPostId = eachPost["id"] as! Int
-                let eachPostTitle = eachPost["title"] as! String
-                let eachPostDescription = eachPost["description"] as! String
+            switch response.result{
+                case .success(let data):
+                    self.posts = try! JSONDecoder().decode([Post].self, from: data!)
+                    print(self.posts)
+                break
                 
-                let newPostObject = Post(
-                    userId: eachPostUserID,
-                    id: eachPostId,
-                    title: eachPostTitle,
-                    description: eachPostDescription)
-                
-                self.posts.append(newPostObject)
+                case .failure(let error):
+                    print(error.localizedDescription)
+                break
             }
+        }
             
-            DispatchQueue.main.async {
-                self.postTableView.reloadData()
+        DispatchQueue.main.async {
+            self.postTableView.reloadData()
             }
         }
     }
-}

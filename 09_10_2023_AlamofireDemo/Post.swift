@@ -11,5 +11,5 @@ struct Post : Decodable{
     var userId : Int
     var id : Int
     var title : String
-    var description : String
+    var body : String
 }
